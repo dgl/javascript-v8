@@ -24,5 +24,12 @@ is($retval, 'arg', 'return value');
 $context->eval("bar(foo())");
 is $arg,'arg','passing arguments';
 
+my $expected = {a=>[1,"2",3], b=>"coucou"};
+$context->bind_function(foo2 => sub {
+    return $expected;
+});
+is_deeply($context->eval("foo2()"), $expected);
+
+
 done_testing;
 

@@ -1,9 +1,11 @@
 Revision history for Perl extension JavaScript::V8
 
-0.05
+0.05  Sat 12 Mar 2011 15:40:20 GMT
     - API change: Always return array and hash references (previously the API
       was broken, returning raw AV and HVes, resulting in "Bizarre copy of XXX"
       errors if you didn't make the return value into a reference yourself).
+    - Support return of nested data structures from JavaScript functions
+      (Stéphane Puybareau).
 
 0.04  Sat 19 Feb 2011 16:08:46 GMT
     - RT #65875: Better compile exception handling (Rémy Chibois)

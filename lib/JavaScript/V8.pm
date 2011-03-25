@@ -2,7 +2,7 @@ package JavaScript::V8;
 use strict;
 use warnings;
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 use JavaScript::V8::Context;
 require XSLoader;
