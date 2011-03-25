@@ -4,6 +4,7 @@ use warnings;
 
 our $VERSION = '0.04';
 
+use JavaScript::V8::Context;
 require XSLoader;
 XSLoader::load('JavaScript::V8', $VERSION);
 

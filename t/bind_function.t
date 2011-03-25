@@ -18,10 +18,11 @@ $context->bind_function(bar => sub {
     $arg = $_[0];
 });
 
-$context->eval("foo()");
+my $retval = $context->eval("foo()");
 ok($called_foo,'calling p5 function from js');
+is($retval, 'arg', 'return value');
 $context->eval("bar(foo())");
-is $arg,'arg','passing arguments and return values';
+is $arg,'arg','passing arguments';
 
 done_testing;
 

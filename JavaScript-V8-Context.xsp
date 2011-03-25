@@ -6,9 +6,9 @@
 
   ~V8Context();
 
+  SV* _call_v8_function(SV *ptr, SV *args);
   SV* eval(const char* code);
-  void bind_function(const char* name,SV* code);
-
+  void bind(const char* name,SV* code);
 };
 
 

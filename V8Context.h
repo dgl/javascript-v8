@@ -6,22 +6,31 @@
 #undef New
 #undef Null
 #include <v8.h>
-#include <vector>
+
+using namespace v8;
 
 class V8Context {
-public:
-  v8::Persistent<v8::Context> context;
-  std::vector<SV*> used;
+    public:
+        V8Context();
+        ~V8Context();
 
-  void bind_function(const char* name,SV* code);
+        void bind(const char*, SV*);
+        SV* eval(const char*);
+        SV* _call_v8_function(SV*, SV*);
 
-  V8Context() {
-        context = v8::Context::New();
-  }
-  ~V8Context();
-  SV* eval(const char* code);
+        Handle<Value> sv2v8(SV*);
+        SV*           v82sv(Handle<Value>);
+    private:
+        Handle<Value>    rv2v8(SV*);
+        Handle<Array>    av2array(AV*);
+        Handle<Object>   hv2object(HV*);
+        Handle<Function> cv2function(SV*);
 
-private:
+        SV* array2sv(Handle<Array>);
+        SV* object2sv(Handle<Object>);
+        SV* function2sv(Handle<Function>);
+
+        Persistent<Context> context;
 };
 
 #endif

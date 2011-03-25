@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-use Test::More tests => 10;
+use Test::More tests => 11;
 use JavaScript::V8;
 use strict;
 use warnings;
@@ -47,12 +47,9 @@ my $context = JavaScript::V8::Context->new();
     is_deeply($context->eval('x={"\u00a3":{bar:{boo:"far"}}}'), \%expected);die $@ if $@;
 };
 
-{
-    local $TODO = "Function references";
-    my $code = $context->eval('function x() { return 2+2 }; x');
-    isa_ok $code, "CODE";
-    #is $code->(), 4;
-};
+my $code = $context->eval('function x() { return 2+2 }; x');
+isa_ok $code, "CODE";
+is $code->(), 4;
 
 done_testing;
 
