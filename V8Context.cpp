@@ -242,7 +242,7 @@ V8Context::rv2v8(SV *sv) {
 
 Handle<Array>
 V8Context::av2array(AV *av) {
-    I32 i, last = av_len(av), len = (last == -1 ? 0 : last - 1);
+    I32 i, len = av_len(av) + 1;
     Handle<Array> array = Array::New(len);
     for (i = 0; i < len; i++) {
         array->Set(i, sv2v8(*av_fetch(av, i, 0)));
