@@ -77,6 +77,10 @@ On Ubuntu 10.04 (and possibly Debian), the library and header files can be insta
 
 Similar packages may be available for other distributions (adjust the package names accordingly).
 
+=head1 DOCUMENTATION
+
+See documentation for C<JavaScript::V8::Context> for more details.
+
 =head1 REPOSITORY
 
 The source code lives at L<http://github.com/dgl/javascript-v8>.
