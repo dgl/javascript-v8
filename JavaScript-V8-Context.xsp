@@ -2,7 +2,7 @@
 
 %name{JavaScript::V8::Context} class V8Context
 {
-  %name{_new} V8Context(int time_limit);
+  %name{_new} V8Context(int time_limit, bool enable_blessing, const char* bless_prefix);
 
   ~V8Context();
 

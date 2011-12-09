@@ -6,5 +6,6 @@
 %typemap{const char*}{simple};
 %typemap{int}{simple};
 %typemap{void}{simple};
+%typemap{bool}{simple};
 %typemap{SV*}{simple};
 

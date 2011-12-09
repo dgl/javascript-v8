@@ -7,11 +7,14 @@
 #undef Null
 #include <v8.h>
 
+#include <string>
+
 using namespace v8;
+using namespace std;
 
 class V8Context {
     public:
-        V8Context(int time_limit = 0);
+        V8Context(int time_limit = 0, bool enable_blessing = false, const char* bless_prefix = NULL);
         ~V8Context();
 
         void bind(const char*, SV*);
@@ -30,9 +33,12 @@ class V8Context {
 
         SV* array2sv(Handle<Array>);
         SV* object2sv(Handle<Object>);
+        SV* object2blessed(Handle<Object>);
         SV* function2sv(Handle<Function>);
 
         int time_limit_;
+        string bless_prefix;
+        bool enable_blessing;
 };
 
 #endif

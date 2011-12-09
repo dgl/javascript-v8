@@ -9,6 +9,7 @@
 #include <time.h>
 
 using namespace v8;
+using namespace std;
 
 // Internally-used wrapper around coderefs
 static IV
@@ -143,14 +144,51 @@ namespace
         delete data;
         return 0;
     };
+
+    class ObjectData {
+    public:
+        Persistent<Object> object;
+ 
+        ObjectData(Handle<Object> obj)
+            : object(Persistent<Object>::New(obj)) 
+        { }
+
+        void set_sv(SV *sv) {
+            SV *ptr = newSViv((IV) this);
+            sv_magicext(sv, ptr, PERL_MAGIC_ext, &ObjectData::vtable, "v8object", 0);
+        }
+ 
+        ~ObjectData() {
+            object.Dispose();
+        }
+ 
+    public:
+        static MGVTBL vtable;
+        static int svt_free(pTHX_ SV*, MAGIC*);
+    };
+ 
+    MGVTBL ObjectData::vtable = {
+        0,
+        0,
+        0,
+        0,
+        ObjectData::svt_free,
+    };
+ 
+    int ObjectData::svt_free(pTHX_ SV* sv, MAGIC* mg) {
+        delete (ObjectData*)SvIV(mg->mg_obj);
+        return 0;
+    };
 };
 
 // V8Context class starts here
 
-V8Context::V8Context(int time_limit) {
-    context = Context::New();
-    time_limit_ = time_limit;
-}
+V8Context::V8Context(int time_limit, bool enable_blessing_, const char* bless_prefix_)
+    : time_limit_(time_limit),
+      bless_prefix(bless_prefix_),
+      enable_blessing(enable_blessing_),
+      context(Context::New())
+{ }
 
 V8Context::~V8Context() {
     context.Dispose();
@@ -325,6 +363,12 @@ V8Context::rv2v8(SV *sv) {
     if (t == SVt_PVCV) {
         return cv2function((CV*)ref);
     }
+    if (MAGIC *mg = mg_find(ref, PERL_MAGIC_ext)) {
+        if (mg->mg_virtual == &ObjectData::vtable) {
+            ObjectData *This = (ObjectData *)SvIV(ref);
+            return This->object;
+        }
+    }
     warn("Unknown reference type in sv2v8()");
     return Undefined();
 }
@@ -334,7 +378,7 @@ V8Context::av2array(AV *av) {
     I32 i, len = av_len(av) + 1;
     Handle<Array> array = Array::New(len);
     for (i = 0; i < len; i++) {
-        array->Set(i, sv2v8(*av_fetch(av, i, 0)));
+        array->Set(Integer::New(i), sv2v8(*av_fetch(av, i, 0)));
     }
     return array;
 }
@@ -378,6 +422,9 @@ V8Context::array2sv(Handle<Array> array) {
 
 SV *
 V8Context::object2sv(Handle<Object> obj) {
+    if (enable_blessing && obj->Has(String::New("__perlPackage"))) {
+        return object2blessed(obj);
+    }
     HV *hv = newHV();
     Local<Array> properties = obj->GetPropertyNames();
     for (int i = 0; i < properties->Length(); i++) {
@@ -389,6 +436,17 @@ V8Context::object2sv(Handle<Object> obj) {
         hv_store(hv, *propertyNameUTF8, 0 - propertyNameUTF8.length(), v82sv( propertyValue ), 0 );
     }
     return newRV_noinc((SV*)hv);
+}
+
+static void
+my_gv_setsv(pTHX_ GV* const gv, SV* const sv){
+    ENTER;
+    SAVETMPS;
+
+    sv_setsv_mg((SV*)gv, sv_2mortal(newRV_inc((sv))));
+
+    FREETMPS;
+    LEAVE;
 }
 
 XS(v8closure) {
@@ -433,9 +491,91 @@ XS(v8closure) {
     XSRETURN(1);
 }
 
+XS(v8method) {
+#ifdef dVAR
+    dVAR;
+#endif
+    dXSARGS;
+
+    bool die = false;
+
+    {
+        /* We have to do all this inside a block so that all the proper
+         * destuctors are called if we need to croak. If we just croak in the
+         * middle of the block, v8 will segfault at program exit. */
+        TryCatch        try_catch;
+        HandleScope     scope;
+        ClosureData    *data = ClosureData::for_cv(cv);
+        V8Context      *self = data->context;
+        Handle<Context> ctx  = self->context;
+        Context::Scope  context_scope(ctx);
+        Handle<Value>   argv[items - 1];
+
+        for (I32 i = 1; i < items; i++) {
+            argv[i - 1] = self->sv2v8(ST(i));
+        }
+
+        ObjectData *This = (ObjectData *)SvIV((SV*)SvRV(ST(0)));
+
+        Handle<Value> result = data->function->Call(This->object->ToObject(), items - 1, argv);
+
+        if (try_catch.HasCaught()) {
+            Local<Value> e = try_catch.Exception();
+            String::Utf8Value str(e);
+            sv_setpvn(ERRSV, *str, str.length());
+            die = true;
+        }
+        else {
+            ST(0) = sv_2mortal(self->v82sv(result));
+        }
+    }
+
+    if (die)
+        croak(NULL);
+
+    XSRETURN(1);
+}
+
 SV*
 V8Context::function2sv(Handle<Function> fn) {
     CV          *code = newXS(NULL, v8closure, __FILE__);
     ClosureData *data = new ClosureData(code, this, fn);
     return newRV_noinc((SV*)code);
 }
+
+SV*
+V8Context::object2blessed(Handle<Object> obj) {
+    Local<Object> prototype = obj->GetPrototype()->ToObject();
+    string package = bless_prefix + string(*String::AsciiValue(obj->Get(String::New("__perlPackage"))->ToString()));
+
+    HV *stash = gv_stashpv(package.c_str(), 0);
+
+    if (!stash) {
+        stash = gv_stashpv(package.c_str(), GV_ADD);
+
+        Local<Array> properties = prototype->GetPropertyNames();
+        for (int i = 0; i < properties->Length(); i++) {
+            Local<String> name = properties->Get(i)->ToString();
+            Local<Value> property = prototype->Get(name);
+
+            if (!property->IsFunction())
+                continue;
+
+            Local<Function> fn = Local<Function>::Cast(property);
+
+            CV *code = newXS(NULL, v8method, __FILE__);
+            ClosureData *data = new ClosureData(code, this, fn);
+
+            GV* gv = (GV*)*hv_fetch(stash, *String::AsciiValue(name), name->Length(), TRUE);
+            gv_init(gv, stash, *String::AsciiValue(name), name->Length(), GV_ADDMULTI); /* vivify */
+            my_gv_setsv(aTHX_ gv, (SV*)code);
+        }
+    }
+
+    ObjectData *data = new ObjectData(obj);
+    SV *rv = sv_setref_pv(newSV(0), package.c_str(), (void*)data);
+    data->set_sv(SvRV(rv));
+
+    return rv;
+}
+
