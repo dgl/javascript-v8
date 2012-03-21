@@ -121,11 +121,13 @@ The source code lives at L<http://github.com/dgl/javascript-v8>.
   Pawel Murias <pawelmurias at gmail dot com>
   David Leadbeater <dgl@dgl.cx>
   Paul Driver <frodwith at gmail dot com>
+  Igor Zaytsev <igor.zaytsev@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
   Copyright (c) 2009-2010 Paweł Murias
   Copyright (c) 2011 David Leadbeater
+  Copyright (c) 2011 Igor Zaytsev
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

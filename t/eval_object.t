@@ -1,10 +1,10 @@
 #!/usr/bin/perl
-use Test::More tests => 11 + 2*1000;
+use Test::More tests => 14 + 2*1000;
 use JavaScript::V8;
 use strict;
 use warnings;
 
-my $context = JavaScript::V8::Context->new();
+my $context = JavaScript::V8::Context->new( enable_wantarray => 1 );
 
 {
     my %expected = ( foo => 'bar' );
@@ -48,6 +48,9 @@ my $context = JavaScript::V8::Context->new();
     is_deeply($context->eval('x={"\u00a3":{bar:{boo:"far\u00a3"}}}'), \%expected);die $@ if $@;
 };
 
+is_deeply [ $context->eval('var f = (function() { return [1,2,3]; }); f.__perlReturnsList = true; f')->() ], [1,2,3], 'array returns as a list in list context';
+#is_deeply [ $context->eval('[1,2,3,4,5]') ], [1,2,3,4,5], 'eval in list context'; 
+
 for(1 .. 1000) {
   my $code = $context->eval('function x() { return 2+2 }; x');
   isa_ok $code, "CODE";
@@ -57,5 +60,12 @@ for(1 .. 1000) {
 my $errcv = $context->eval('function err() { throw new Error("fail") }; err');
 eval { $errcv->() };
 like $@, qr/fail/, 'got proper exception';
+
+my $f1 = $context->eval('var f = function(a) { return a; }; f');
+my $f2 = $context->eval('f');
+my $f3 = $f2->($f1)->($f2);
+
+is $f1, $f2, 'roundtrip - same perl object';
+is $f1, $f3, 'roundtrip - same perl object';
 
 done_testing;

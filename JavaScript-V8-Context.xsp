@@ -2,10 +2,13 @@
 
 %name{JavaScript::V8::Context} class V8Context
 {
-  %name{_new} V8Context(int time_limit);
+  %name{_new} V8Context(int time_limit, const char* flags, bool enable_blessing, const char* bless_prefix);
 
   ~V8Context();
 
-  SV* eval(SV* source);
+  SV* eval(SV* source, SV* origin = NULL);
   void bind(const char* name, SV* code);
+  bool idle_notification();
+  int adjust_amount_of_external_allocated_memory(int change_in_bytes);
+  void set_flags_from_string(char *str);
 };

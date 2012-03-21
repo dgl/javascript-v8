@@ -26,6 +26,8 @@ Instructions for installing V8 can be found in the POD for JavaScript::V8
 COPYRIGHT AND LICENCE
 
 Copyright (C) 2009-2010 Paweł Murias
+Copyright (C) 2011 David Leadbeater
+Copyright (C) 2011 Igor Zaytsev
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

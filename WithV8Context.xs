@@ -1,12 +1,3 @@
-#ifdef __cplusplus
-extern "C" {
-#include "EXTERN.h"
-#include "perl.h"
-#include "XSUB.h"
-}
-#endif
-
-/* include your class headers here */
 #include "V8Context.h"
 
 /* Handle Perl < 5.10 */

@@ -4,25 +4,7 @@
   Mostly so we get the benefit of cpantesters testing JavaScript::V8
   for us, but also make it so that people don't have to install V8
   manually...
-* Think about making returning objects more like tie (or similar)
-  Currently (trying) to copy them fails in the case of circular
-  references.
-  e.g.: perl -MJavaScript::V8 -e'$c=JavaScript::V8::Context->new; $c->eval(q{x={}; x.y=x; x})'
-        zsh: segmentation fault  perl -MJavaScript::V8
-  Alternatively just remember which objects were seen (ala Storable)
-** Make object methods callable?
-  A nice effect of this could be if in:
-   perl -MJavaScript::V8 -e'$c=JavaScript::V8::Context->new;
-     my $obj = $c->eval(q{x={x: function() { return 2 } }; x});
-     print $obj->{x}->()'
-  $obj was actually blessed into something so $obj->x would work
-  instead. (Semantics needs some thought though.)
-** Object binding could also be closer to actual binding
-  e.g. similar issue to returning objects with circular references:
-    perl -MJavaScript::V8 -e'$c=JavaScript::V8::Context->new; $x={};$x->{y}=$x; $c->bind(x=>$x)'
-    zsh: segmentation fault  perl -MJavaScript::V8
 * Lots of tests
-  (starting with the above segfault? ;) )
 * Look at JavaScript::V8x::TestMoreish on CPAN
   It might be interesting to investigate (and also check the recent changes haven't broken it...)
 * re::engine::V8

@@ -4,7 +4,14 @@ sub new {
     my($class, %args) = @_;
 
     my $time_limit = delete $args{time_limit} || 0;
-    $class->_new($time_limit);
+    my $flags = delete $args{flags} || '';
+    my $enable_blessing 
+        = exists $args{enable_blessing} 
+        ? delete $args{enable_blessing} 
+        : (exists $args{bless_prefix} ? 1 : 0);
+    my $bless_prefix = delete $args{bless_prefix} || '';
+
+    $class->_new($time_limit, $flags, $enable_blessing, $bless_prefix);
 }
 
 sub bind_function {
@@ -34,12 +41,19 @@ JavaScript::V8::Context - An object in which we can execute JavaScript
 
 =over
 
-=item new ( [time_limit => seconds] )
+=item new ( [time_limit => seconds], [enable_blessing => bool], [bless_prefix => string] )
 
 Create a new JavaScript::V8::Context object. The optional C<time_limit>
 parameter will force an exception after the script has run for a number of
 seconds; this limit will be enforced even if V8 calls back to Perl or blocks on
 IO.
+
+If C<enable_blessing> is defined, JavaScript objects that have the
+C<__perlPackage> prorerty are converted to Perl blessed scalar references.
+These refernces are blessed into a Perl package with a name C<bless_prefix> +
+C<__perlPackage>. This package is automagically created and filled with methods
+from JavaScript object prototype. C<bless_prefix> is optional and can be left
+out if you completely trust your JavaScript code.
 
 =item bind ( name => $scalar )
 
@@ -131,7 +145,7 @@ Perl type:
   Boolean                     | scalar (1 or 0)
   String                      | scalar
   Function                    | code reference
-  Object                      | hash reference
+  Object                      | hash reference or blessed scalar reference
   Array                       | array reference
 
 If there is a compilation error (such as a syntax error) or an uncaught
@@ -139,6 +153,9 @@ exception is thrown in JavaScript, this method returns undef and $@ is set.
 
 A function reference returned from JavaScript is not wrapped in the context
 created by eval(), so JavaScript exceptions will propagate to Perl code.
+
+JavaScript function object having a C<__perlReturnsList> property set that
+returns an array will return a list to Perl when called in list context.
 
 =back
 
