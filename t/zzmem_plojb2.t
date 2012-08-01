@@ -4,7 +4,7 @@ use utf8;
 use strict;
 use warnings;
 
-use Test::More;
+use Test::More skip_all => $^V lt v5.10;
 
 use FindBin;
 my $context = require "$FindBin::Bin/mem.pl";

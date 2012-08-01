@@ -557,6 +557,7 @@ V8Context::fill_prototype(Handle<Object> prototype, HV* stash) {
     }
 }
 
+#if PERL_VERSION > 8
 Handle<Object>
 V8Context::get_prototype(SV *sv) {
     HV *stash = SvSTASH(sv);
@@ -585,6 +586,7 @@ V8Context::get_prototype(SV *sv) {
 
     return prototype;
 }
+#endif
 
 Handle<Value>
 V8Context::rv2v8(SV *rv, HandleMap& seen) {
@@ -603,8 +605,10 @@ V8Context::rv2v8(SV *rv, HandleMap& seen) {
             return it->second;
     }
 
+#if PERL_VERSION > 8
     if (SvOBJECT(sv))
         return blessed2object(sv);
+#endif
 
     unsigned t = SvTYPE(sv);
 
@@ -621,6 +625,7 @@ V8Context::rv2v8(SV *rv, HandleMap& seen) {
     return Undefined();
 }
 
+#if PERL_VERSION > 8
 Handle<Object>
 V8Context::blessed2object(SV *sv) {
     Handle<Object> object = Object::New();
@@ -628,6 +633,7 @@ V8Context::blessed2object(SV *sv) {
 
     return (new PerlObjectData(this, object, sv))->object;
 }
+#endif
 
 Handle<Array>
 V8Context::av2array(AV *av, HandleMap& seen, long ptr) {
@@ -696,7 +702,8 @@ V8Context::object2sv(Handle<Object> obj, SvMap& seen) {
         String::Utf8Value propertyNameUTF8( propertyName );
 
         Local<Value> propertyValue = obj->Get( propertyName );
-        hv_store(hv, *propertyNameUTF8, 0 - propertyNameUTF8.length(), v82sv(propertyValue, seen), 0);
+        if (*propertyValue)
+            hv_store(hv, *propertyNameUTF8, 0 - propertyNameUTF8.length(), v82sv(propertyValue, seen), 0);
     }
     return rv;
 }

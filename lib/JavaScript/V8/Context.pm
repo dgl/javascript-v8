@@ -85,6 +85,19 @@ method names and corresponding code references, for example:
 
   print $context->eval("test_object.method('Hello')");
 
+=item Blessed objects
+
+Pass the bind method the name of an object, and a blessed reference, for
+example:
+
+  $context->bind(
+    perl_object => $blessed_reference,
+  );
+
+  print $context->eval("perl_object.method('Hello')");
+
+B<This requires Perl 5.10 or later.>
+
 =item Arrays
 
 Pass the bind method a JavaScript variable name with an array reference to

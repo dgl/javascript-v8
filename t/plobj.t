@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-use Test::More;
+use Test::More skip_all => $^V lt v5.10;
 use Data::Dumper;
 use JavaScript::V8;
 
