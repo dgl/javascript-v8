@@ -26,7 +26,7 @@ void set_perl_error(const TryCatch& try_catch) {
         1024,
         "%s at %s:%d",
         *(String::Utf8Value(try_catch.Exception())),
-        !msg.IsEmpty() ? *(String::AsciiValue(msg->GetScriptResourceName())) : "EVAL",
+        !msg.IsEmpty() ? *(String::AsciiValue(msg->GetScriptResourceName())) : "eval",
         !msg.IsEmpty() ? msg->GetLineNumber() : 0
     );
 
@@ -420,7 +420,7 @@ V8Context::eval(SV* source, SV* origin) {
 
     Handle<Script> script = Script::Compile(
         sv2v8str(source),
-        origin ? sv2v8str(origin) : String::New("EVAL")
+        origin ? sv2v8str(origin) : String::New("eval")
     );
 
     if (try_catch.HasCaught()) {

@@ -41,23 +41,43 @@ JavaScript::V8::Context - An object in which we can execute JavaScript
 
 =over
 
-=item new ( [time_limit => seconds], [enable_blessing => bool], [bless_prefix => string] )
+=item new ( %parameters )
 
-Create a new JavaScript::V8::Context object. The optional C<time_limit>
-parameter will force an exception after the script has run for a number of
-seconds; this limit will be enforced even if V8 calls back to Perl or blocks on
-IO.
+Create a new JavaScript::V8::Context object.
 
-If C<enable_blessing> is defined, JavaScript objects that have the
-C<__perlPackage> prorerty are converted to Perl blessed scalar references.
-These refernces are blessed into a Perl package with a name C<bless_prefix> +
-C<__perlPackage>. This package is automagically created and filled with methods
-from JavaScript object prototype. C<bless_prefix> is optional and can be left
-out if you completely trust your JavaScript code.
+Several optional parameters are accepted:
+
+=over
+
+=item time_limit
+
+Force an exception after the script has run for a number of seconds; this
+limit will be enforced even if V8 calls back to Perl or blocks on IO.
+
+=item enable_blessing
+
+If enabled, JavaScript objects that have the C<__perlPackage> property are
+converted to Perl blessed scalar references. These references are blessed
+into a Perl package with a name C<bless_prefix> + C<__perlPackage>. This
+package is automagically created and filled with methods from JavaScript
+object prototype. C<bless_prefix> is optional and can be left out if you
+completely trust the JavaScript code you're running.
+
+=item bless_prefix
+
+Specifies a package name prefix to use for blessed JavaScript objects. Has
+no effect unless C<enable_blessing> is set.
+
+=item flags
+
+Specify a string of flags to be passed to V8. See
+C<set_flags_from_string()> for more details.
+
+=back
 
 =item bind ( name => $scalar )
 
-Converts the given scalar value (array ref, code ref, or hash ref) to a v8
+Converts the given scalar value (array ref, code ref, or hash ref) to a V8
 value and binds it in this execution context.
 
 Examples:
@@ -143,7 +163,7 @@ version (the binding may become more complete).
 
 DEPRECATED. This is just an alias for bind.
 
-=item eval ( $source )
+=item eval ( $source[, $origin] )
 
 Evaluates the JavaScript code given in I<$source> and
 returns the result from the last statement.
@@ -163,12 +183,43 @@ Perl type:
 
 If there is a compilation error (such as a syntax error) or an uncaught
 exception is thrown in JavaScript, this method returns undef and $@ is set.
+If an optional origin for C<$source> has been provided, this will be
+reported as the origin of the error in $@. This is useful for debugging
+when eval-ing code from multiple different files or locations.
 
 A function reference returned from JavaScript is not wrapped in the context
 created by eval(), so JavaScript exceptions will propagate to Perl code.
 
 JavaScript function object having a C<__perlReturnsList> property set that
 returns an array will return a list to Perl when called in list context.
+
+=item set_flags_from_string ( $flags )
+
+Set or unset various flags supported by V8 (see
+L<http://code.google.com/p/v8/source/browse/trunk/src/flag-definitions.h>
+or F<src/flag-definitions.h> in the V8 source for details of all available
+flags).
+
+For example, the C<builtins_in_stack_traces> flag controls showing built-in
+functions in stack traces. To set this, call:
+
+  $context->set_flags_from_string("--builtins-in-stack-traces");
+
+Note underscores are replaced with hyphens. Note that flags which are
+enabled by default are disabled by prefixing the name with "no" - for
+example, the "foo" flag could be disabled with C<--nofoo>.
+
+Flags are commonly used for debugging or changing the behaviour of V8 in
+some way. Some flags can only be set whenever a context is created - set
+these with the flags parameter to C<new()>.
+
+=item idle_notification( )
+
+Used as a hint to tell V8 that your application is idle, so now might be a
+suitable time for garbage collection. Returns 1 if there is no further work
+V8 can currently do.
+
+Most users of C<JavaScript::V8> will not need this.
 
 =back
 
