@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 use Test::More;
+use Test::Number::Delta within => 1e-9;
 use JavaScript::V8;
 use strict;
 use warnings;
@@ -16,7 +17,7 @@ is $val,777,"integers";
 
 is($context->eval("'\x{a3}'"), "\x{a3}", 'latin-1 strings');
 
-is($context->eval("1.34"), 1.34, 'numbers');
+delta_ok($context->eval("1.34"), 1.34, 'numbers');
 ok(!defined $context->eval('undefined'), 'undefined');
 ok(!defined $context->eval('null'), 'null');
 
