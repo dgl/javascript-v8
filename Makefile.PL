@@ -15,7 +15,6 @@ check_lib_or_exit(
 );
 
 my $guess = ExtUtils::CppGuess->new;
-$guess->add_extra_compiler_flags('-fpermissive') if gcc_version() >= 4.5;
 
 WriteMakefile(
     NAME              => 'JavaScript::V8',
@@ -45,11 +44,3 @@ WriteMakefile(
     },
     $guess->makemaker_options,
 );
-
-sub gcc_version {
-  require Config;
-  my $gccv = $Config::Config{gccversion} or return 0;
-  # Just the first two digits
-  $gccv =~ /^(\d+\.\d+)/;
-  $1;
-}

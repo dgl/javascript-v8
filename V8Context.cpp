@@ -223,6 +223,7 @@ public:
 class PerlFunctionData : public PerlObjectData {
 private:
     SV *rv;
+    Local<Value> *thisWrapped;
 
 protected:
     virtual Handle<Value> invoke(const Arguments& args);
@@ -236,13 +237,17 @@ public:
                   context_->make_function->Call(
                       context_->context->Global(),
                       1,
-                      &External::Wrap(this)
+                      thisWrapped = new Local<Value>(External::Wrap(this))
                   )
               ),
               cv
           )
        , rv(cv ? newRV_noinc(cv) : NULL)
     { }
+    
+    ~PerlFunctionData() {
+        delete thisWrapped;
+    }
 
     static Handle<Value> v8invoke(const Arguments& args) {
         PerlFunctionData* data = static_cast<PerlFunctionData*>(External::Unwrap(args[0]));
