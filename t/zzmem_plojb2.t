@@ -4,7 +4,11 @@ use utf8;
 use strict;
 use warnings;
 
-use Test::More skip_all => $^V lt v5.10;
+use Test::More;
+
+if ($^V lt v5.10) {
+    plan skip_all => 'perl >= v5.10 needed';
+}
 
 use FindBin;
 my $context = require "$FindBin::Bin/mem.pl";

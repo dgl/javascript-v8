@@ -1,12 +1,16 @@
 #!/usr/bin/perl
 
-use Test::More skip_all => $^V lt v5.10;
+use Test::More;
 use Data::Dumper;
 use JavaScript::V8;
 
 use utf8;
 use strict;
 use warnings;
+
+if ($^V lt v5.10) {
+    plan skip_all => 'perl >= v5.10 needed';
+}
 
 my $context = JavaScript::V8::Context->new();
 
