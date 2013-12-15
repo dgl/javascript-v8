@@ -771,10 +771,10 @@ my_gv_setsv(pTHX_ GV* const gv, SV* const sv){
         V8Context      *self = data->context; \
         Handle<Context> ctx  = self->context; \
         Context::Scope  context_scope(ctx); \
-        Handle<Value>   argv[items - ARGS_OFFSET]; \
+        vector<Handle<Value> > argv; \
 \
         for (I32 i = ARGS_OFFSET; i < items; i++) { \
-            argv[i - ARGS_OFFSET] = self->sv2v8(ST(i)); \
+            argv.push_back(self->sv2v8(ST(i))); \
         }
 
 #define CONVERT_V8_RESULT(POP) \
@@ -815,14 +815,14 @@ XSRETURN(count);
 
 XS(v8closure) {
     SETUP_V8_CALL(0)
-    Handle<Value> result = Handle<Function>::Cast(data->object)->Call(ctx->Global(), items, argv);
+    Handle<Value> result = Handle<Function>::Cast(data->object)->Call(ctx->Global(), items, &argv[0]);
     CONVERT_V8_RESULT()
 }
 
 XS(v8method) {
     SETUP_V8_CALL(1)
     V8ObjectData* This = (V8ObjectData*)SvIV((SV*)SvRV(ST(0)));
-    Handle<Value> result = Handle<Function>::Cast(data->object)->Call(This->object, items - 1, argv);
+    Handle<Value> result = Handle<Function>::Cast(data->object)->Call(This->object, items - 1, &argv[0]);
     CONVERT_V8_RESULT(POPs);
 }
 
