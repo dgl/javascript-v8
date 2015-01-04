@@ -13,10 +13,21 @@ check_lib_or_exit(
         : (),
 );
 
-my $CC = 'c++';
+my $CC;
 
-if ($#ARGV + 1) {
-    $CC = $ARGV[0];
+if (system('c++ --version') == 0) {
+    $CC = 'c++';
+}
+elsif (system('g++ --version') == 0) {
+    $CC = 'g++';
+}
+elsif (system('clang++ --version') == 0) {
+    $CC = 'clang++';
+}
+else {
+    #set to g++ and hope for the best
+    $CC = 'g++';
+    warn 'No supported compiler found, defaulting to g++';
 }
 
 my %mm = (
