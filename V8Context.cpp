@@ -129,7 +129,7 @@ void SvMap::add(Handle<Object> object, long ptr) {
 SV* SvMap::find(Handle<Object> object) {
     int hash = object->GetIdentityHash();
 
-    for (sv_map::const_iterator it = objects.find(hash); it != objects.end(), it->first == hash; it++)
+    for (sv_map::const_iterator it = objects.find(hash); it != objects.end() && it->first == hash; it++)
         if (it->second->object->Equals(object))
             return newRV_inc(INT2PTR(SV*, it->second->ptr));
 
@@ -227,16 +227,18 @@ private:
 protected:
     virtual Handle<Value> invoke(const Arguments& args);
     virtual size_t size();
+    Local<Value> functionData;    
 
 public:
     PerlFunctionData(V8Context* context_, SV *cv)
-        : PerlObjectData(
+        : functionData(External::Wrap(this))
+        , PerlObjectData(
               context_,
               Handle<Object>::Cast(
                   context_->make_function->Call(
                       context_->context->Global(),
                       1,
-                      &External::Wrap(this)
+                      &functionData
                   )
               ),
               cv
@@ -570,7 +572,7 @@ V8Context::v82sv(Handle<Value> value) {
 void
 V8Context::fill_prototype(Handle<Object> prototype, HV* stash) {
     HE *he;
-    while (he = hv_iternext(stash)) {
+    while ((he = hv_iternext(stash))) {
         SV *key = HeSVKEY_force(he);
         Local<String> name = String::New(SvPV_nolen(key));
 
@@ -681,7 +683,7 @@ V8Context::hv2object(HV *hv, HandleMap& seen, long ptr) {
     hv_iterinit(hv);
     Handle<Object> object = Object::New();
     seen[ptr] = object;
-    while (val = hv_iternextsv(hv, &key, &len)) {
+    while ((val = hv_iternextsv(hv, &key, &len))) {
         object->Set(String::New(key, len), sv2v8(val, seen));
     }
     return object;
@@ -765,7 +767,7 @@ my_gv_setsv(pTHX_ GV* const gv, SV* const sv){
         V8Context      *self = data->context; \
         Handle<Context> ctx  = self->context; \
         Context::Scope  context_scope(ctx); \
-        Handle<Value>   argv[items - ARGS_OFFSET]; \
+        vector< Handle<Value> >   argv(items - ARGS_OFFSET); \
 \
         for (I32 i = ARGS_OFFSET; i < items; i++) { \
             argv[i - ARGS_OFFSET] = self->sv2v8(ST(i)); \
@@ -809,14 +811,14 @@ XSRETURN(count);
 
 XS(v8closure) {
     SETUP_V8_CALL(0)
-    Handle<Value> result = Handle<Function>::Cast(data->object)->Call(ctx->Global(), items, argv);
+    Handle<Value> result = Handle<Function>::Cast(data->object)->Call(ctx->Global(), items, &argv[0]);
     CONVERT_V8_RESULT()
 }
 
 XS(v8method) {
     SETUP_V8_CALL(1)
     V8ObjectData* This = (V8ObjectData*)SvIV((SV*)SvRV(ST(0)));
-    Handle<Value> result = Handle<Function>::Cast(data->object)->Call(This->object, items - 1, argv);
+    Handle<Value> result = Handle<Function>::Cast(data->object)->Call(This->object, items - 1, &argv[0]);
     CONVERT_V8_RESULT(POPs);
 }
 

@@ -14,6 +14,11 @@ check_lib_or_exit(
 );
 
 my $CC = 'g++';
+
+if ($#ARGV + 1) {
+    $CC = $ARGV[0];
+}
+
 my %mm = (
     NAME              => 'JavaScript::V8',
     VERSION_FROM      => 'lib/JavaScript/V8.pm', # finds $VERSION
