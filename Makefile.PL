@@ -13,7 +13,7 @@ check_lib_or_exit(
         : (),
 );
 
-my $CC = 'g++';
+my $CC = 'c++';
 
 if ($#ARGV + 1) {
     $CC = $ARGV[0];
