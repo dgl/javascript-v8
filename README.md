@@ -3,7 +3,12 @@ javascript-v8
 
 Perl interface to V8 JavaScript engine
 
-**To Install:**
+**To Install (CPAN installation)**
+
+    cpan JavaScript::V8
+
+
+**To Install (non-CPAN install):**
 
 Install V8 if not already installed:
 
@@ -11,8 +16,10 @@ Install V8 if not already installed:
 
 Create Makefile
 
-    perl Makefile.PL [compiler]
+    perl Makefile.PL
 
-  (this defaults to g++, but you can also specify clang++)  
+Install
+    
+    make install
 
-Full Details at https://metacpan.org/pod/JavaScript::V8
+More information at https://metacpan.org/pod/JavaScript::V8
