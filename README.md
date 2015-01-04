@@ -11,7 +11,7 @@ Install V8 if not already installed:
 
 Create Makefile
 
-    perl Makefile.PL \[compiler\]
+    perl Makefile.PL [compiler]
 
   (this defaults to g++, but you can also specify clang++)  
 
