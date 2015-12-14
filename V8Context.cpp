@@ -641,8 +641,14 @@ V8Context::rv2v8(SV *rv, HandleMap& seen) {
     }
 
 #if PERL_VERSION > 8
-    if (SvOBJECT(sv))
+    if (SvOBJECT(sv)) {
+        const char *Perl_class = sv_reftype(sv, 1);
+        if ((0 == strcmp(Perl_class, "JSON::PP::Boolean"))
+            || (0 == strcmp(Perl_class, "JSON::XS::Boolean"))
+        )
+            return Boolean::New(sv_2bool(sv));
         return blessed2object(sv);
+    }
 #endif
 
     unsigned t = SvTYPE(sv);

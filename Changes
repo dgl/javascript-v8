@@ -11,6 +11,7 @@ Revision history for Perl extension JavaScript::V8
  - fix unsigned ints on 32-bit perl - thanks @alankila
  - fix memory leak in contexts - thanks @alankila - RT#86903
  - fix needing -fpermissive - thanks @olegwtf
+ - handle JSON booleans properly - thanks @brad-mac
 
 0.07  Fri 28 Dec 11:52:52 GMT 2012
     - Add support for naming the top level object
