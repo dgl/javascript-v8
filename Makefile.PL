@@ -1,5 +1,6 @@
 use 5.008;
 use ExtUtils::MakeMaker;
+use ExtUtils::CppGuess;
 
 use lib qw(inc);
 use Devel::CheckLib;
@@ -13,7 +14,8 @@ check_lib_or_exit(
         : (),
 );
 
-my $CC = 'g++';
+my $guess = ExtUtils::CppGuess->new;
+$guess->add_extra_compiler_flags('-fpermissive') if gcc_version('g++') >= 4.5;
 my %mm = (
     NAME              => 'JavaScript::V8',
     VERSION_FROM      => 'lib/JavaScript/V8.pm', # finds $VERSION
@@ -25,6 +27,7 @@ my %mm = (
     },
     CONFIGURE_REQUIRES => {
       'ExtUtils::MakeMaker' => '6.64', # TEST_REQUIRES
+      'ExtUtils::CppGuess' => '0.19',
     },
     ABSTRACT_FROM  => 'lib/JavaScript/V8.pm', # retrieve abstract from module
     AUTHOR         => 'Pawel Murias <pawelmurias@gmail.org>',
@@ -34,19 +37,14 @@ my %mm = (
     OBJECT            => '$(O_FILES)', # link all the C files too
     XSOPT             => '-C++ -hiertype',
     TYPEMAPS          => ['perlobject.map'],
-    CC                => $CC,
-    LD                => '$(CC)',
     depend            => { 'WithV8Context.c' => 'JavaScript-V8-Context.xsp' },
     META_MERGE => {
       resources        => {
         repository     => 'http://github.com/dgl/javascript-v8',
       }
     },
+    $guess->makemaker_options,
 );
-
-if(gcc_version($CC) >= 4.5) {
-  $mm{CCFLAGS} = '-fpermissive';
-}
 
 WriteMakefile(%mm);
 
