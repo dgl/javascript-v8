@@ -62,7 +62,22 @@ L<https://rt.cpan.org/Ticket/Display.html?id=78512> for more information.
 =head2 From Source
 
 See L<https://v8.dev/docs/build> for how. Be warned, the source repo
-alone is over 800MB.
+alone is over 800MB. Ensure you do the C<fetch v8> somewhere like your
+home directory, then C<cd> into it. The rest of these instructions
+assume this.
+
+When the "build" from there is complete, you will need to (per
+L<http://www.php-javascript.com/documentation/v8>) then:
+
+  git checkout lkgr # last known good revision
+  gclient sync
+  gn gen out.gn/library --args='is_debug=false is_component_build=true v8_enable_i18n_support=false'
+  ninja -C out.gn/library libv8.so
+
+You can then build this module with:
+
+  V8_DIR=~/v8 perl Makefile.PL
+  # etc
 
 =head3 On OS X
 
