@@ -9,6 +9,7 @@ Revision history for Perl extension JavaScript::V8
  - stop putting MYMETA.* in distro
  - handle null/undef so can be in hashes/arrays - fix RT#86731
  - fix unsigned ints on 32-bit perl - thanks @alankila
+ - fix memory leak in contexts - thanks @alankila - RT#86903
 
 0.07  Fri 28 Dec 11:52:52 GMT 2012
     - Add support for naming the top level object

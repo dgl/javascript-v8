@@ -354,6 +354,8 @@ V8Context::~V8Context() {
       it->second.Dispose();
     }
     context.Dispose();
+    string_wrap.Dispose();
+    make_function.Dispose();
     while(!V8::IdleNotification()); // force garbage collection
 }
 
