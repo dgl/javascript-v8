@@ -71,9 +71,9 @@ install Homebrew then:
 
 =head3 Linux
 
-On Ubuntu 10.04 (and possibly Debian), the library and header files can be installed by running:
+On Ubuntu 18.04 (and possibly Debian), the library and header files can be installed by running:
 
-    sudo aptitude install libv8-2.0.3 libv8-dev
+    sudo aptitude install libv8-3.14.5 libv8-3.14-dev
 
 Similar packages may be available for other distributions (adjust the package names accordingly).
 
