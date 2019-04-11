@@ -15,7 +15,7 @@ check_lib_or_exit(
 );
 
 my $guess = ExtUtils::CppGuess->new;
-$guess->add_extra_compiler_flags('-fpermissive') if gcc_version('g++') >= 4.5;
+$guess->add_extra_compiler_flags('-fpermissive') if gcc_version() >= 4.5;
 my %mm = (
     NAME              => 'JavaScript::V8',
     VERSION_FROM      => 'lib/JavaScript/V8.pm', # finds $VERSION
@@ -49,8 +49,9 @@ my %mm = (
 WriteMakefile(%mm);
 
 sub gcc_version {
-  my($cc) = @_;
-  my $gcc_out = qx{$cc -v 2>&1};
+  require Config;
+  my $gccv = $Config::Config{gccversion} or return 0;
   # Just the first two digits
-  $gcc_out =~ /gcc version (\d+\.\d+)/ ? $1 : 0;
+  $gccv =~ /^(\d+\.\d+)/;
+  $1;
 }
