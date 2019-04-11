@@ -42,23 +42,8 @@ JavaScript::V8 - Perl interface to the V8 JavaScript engine
 
 =head2 From Source
 
-See L<V8 issue 413|http://code.google.com/p/v8/issues/detail?id=413> if you are
-having trouble on gcc 4.4.1.
-
-    svn checkout http://v8.googlecode.com/svn/trunk/ v8
-    cd v8
-    scons library=shared
-    sudo mv include/v8.h /usr/local/include/
-    sudo mv libv8.so /usr/local/lib/
-
-If you're using a 64-bit architecture, you need to include C<arch=x64> when
-running scons:
-
-    scons library=shared arch=x64
-
-Otherwise, perl will complain when trying to link/load v8. For more
-information, see L<V8 issue
-330|http://code.google.com/p/v8/issues/detail?id=330>.
+See L<https://v8.dev/docs/build> for how. Be warned, the source repo
+alone is over 800MB.
 
 =head3 On OS X
 
