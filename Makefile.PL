@@ -19,7 +19,7 @@ $guess->add_extra_compiler_flags('-fpermissive') if gcc_version() >= 4.5;
 
 WriteMakefile(
     NAME              => 'JavaScript::V8',
-    VERSION_FROM      => 'lib/JavaScript/V8.pm', # finds $VERSION
+    VERSION_FROM      => 'lib/JavaScript/V8.pm',
     BUILD_REQUIRES    => {
       'ExtUtils::XSpp' => '0.11',
     },
@@ -30,11 +30,10 @@ WriteMakefile(
       'ExtUtils::MakeMaker' => '6.64', # TEST_REQUIRES
       'ExtUtils::CppGuess' => '0.19',
     },
-    ABSTRACT_FROM  => 'lib/JavaScript/V8.pm', # retrieve abstract from module
+    ABSTRACT_FROM  => 'lib/JavaScript/V8.pm',
     AUTHOR         => 'Pawel Murias <pawelmurias@gmail.org>',
-    LIBS              => [($V8_DIR ? "-L$V8_DIR " : '') . '-lv8'], # e.g., '-lm'
-    DEFINE            => '', # e.g., '-DHAVE_SOMETHING'
-    INC               => '-I.' . ($V8_DIR ? " -I$V8_DIR/include" : ''), # e.g., '-I. -I/usr/include/other'
+    LIBS              => [($V8_DIR ? "-L$V8_DIR " : '') . '-lv8'],
+    INC               => '-I.' . ($V8_DIR ? " -I$V8_DIR/include" : ''),
     OBJECT            => '$(O_FILES)', # link all the C files too
     XSOPT             => '-C++ -hiertype',
     TYPEMAPS          => ['perlobject.map'],
