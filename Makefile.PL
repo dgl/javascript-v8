@@ -38,9 +38,15 @@ WriteMakefile(
     TYPEMAPS          => ['perlobject.map'],
     depend            => { 'WithV8Context.c' => 'JavaScript-V8-Context.xsp' },
     META_MERGE => {
+      "meta-spec" => { version => 2 },
       resources        => {
-        repository     => 'http://github.com/dgl/javascript-v8',
-      }
+        x_IRC => 'irc://irc.perl.org/#v8',
+        repository     => {
+          type => 'git',
+          url => 'git@github.com:dgl/javascript-v8.git',
+          web => 'http://github.com/dgl/javascript-v8',
+        },
+      },
     },
     $guess->makemaker_options,
 );
