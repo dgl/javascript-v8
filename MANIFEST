@@ -14,8 +14,7 @@ t/01load.t
 t/basic.t
 t/bind_function.t
 t/bind_object.t
-t/boolean_PP.t
-t/boolean_XS.t
+t/boolean.t
 t/circular.t
 t/error.t
 t/eval_array.t
