@@ -1,5 +1,8 @@
 package JavaScript::V8::Context;
 
+use strict;
+use warnings;
+
 sub new {
     my($class, %args) = @_;
 
@@ -20,6 +23,8 @@ sub bind_function {
 }
 
 1;
+
+=encoding utf8
 
 =head1 NAME
 
