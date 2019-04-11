@@ -511,10 +511,10 @@ SV* V8Context::seen_v8(Handle<Object> object) {
 SV *
 V8Context::v82sv(Handle<Value> value, SvMap& seen) {
     if (value->IsUndefined())
-        return &PL_sv_undef;
+        return newSV(0);
 
     if (value->IsNull())
-        return &PL_sv_undef;
+        return newSV(0);
 
     if (value->IsInt32())
         return newSViv(value->Int32Value());
