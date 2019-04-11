@@ -19,7 +19,6 @@ sub new {
 package main;
 
 for (1..100000) {
-    print STDERR "$_\r";
     $context->eval('(function(data) { var x = data; })')->(Test->new($_));
 }
 

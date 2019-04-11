@@ -10,7 +10,6 @@ use FindBin;
 my $context = require "$FindBin::Bin/mem.pl";
 
 for (1..200000) {
-    print STDERR "$_\r";
     $context->eval('(function(data) { var x = data; })')->(sub { 1 });
 }
 
