@@ -473,6 +473,10 @@ V8Context::sv2v8(SV *sv, HandleMap& seen) {
         char *utf8 = SvPVutf8_nolen(sv);
         return String::New(utf8, SvCUR(sv));
     }
+    if (SvUOK(sv)) {
+        UV v = SvUV(sv);
+        return (v < 0xffffffffUL) ? (Handle<Number>)Integer::NewFromUnsigned(v) : Number::New(SvNV(sv));
+    }
     if (SvIOK(sv)) {
         IV v = SvIV(sv);
         return (v <= INT32_MAX && v >= INT32_MIN) ? (Handle<Number>)Integer::New(v) : Number::New(SvNV(sv));
