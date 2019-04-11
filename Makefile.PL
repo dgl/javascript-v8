@@ -16,7 +16,8 @@ check_lib_or_exit(
 
 my $guess = ExtUtils::CppGuess->new;
 $guess->add_extra_compiler_flags('-fpermissive') if gcc_version() >= 4.5;
-my %mm = (
+
+WriteMakefile(
     NAME              => 'JavaScript::V8',
     VERSION_FROM      => 'lib/JavaScript/V8.pm', # finds $VERSION
     BUILD_REQUIRES    => {
@@ -45,8 +46,6 @@ my %mm = (
     },
     $guess->makemaker_options,
 );
-
-WriteMakefile(%mm);
 
 sub gcc_version {
   require Config;
