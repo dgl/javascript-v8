@@ -713,7 +713,6 @@ SV*
 V8Context::array2sv(Handle<Array> array, SvMap& seen) {
     AV *av = newAV();
     SV *rv = newRV_noinc((SV*)av);
-    SvREFCNT_inc(rv);
 
     seen.add(array, PTR2IV(av));
 
@@ -732,7 +731,6 @@ V8Context::object2sv(Handle<Object> obj, SvMap& seen) {
 
     HV *hv = newHV();
     SV *rv = newRV_noinc((SV*)hv);
-    SvREFCNT_inc(rv);
 
     seen.add(obj, PTR2IV(hv));
 
