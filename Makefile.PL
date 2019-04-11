@@ -17,10 +17,15 @@ my $CC = 'g++';
 my %mm = (
     NAME              => 'JavaScript::V8',
     VERSION_FROM      => 'lib/JavaScript/V8.pm', # finds $VERSION
-    PREREQ_PM         => {
+    BUILD_REQUIRES    => {
       'ExtUtils::XSpp' => '0.11',
+    },
+    TEST_REQUIRES     => {
       'Test::Number::Delta' => 0,
-    }, # e.g., Module::Name => 1.1
+    },
+    CONFIGURE_REQUIRES => {
+      'ExtUtils::MakeMaker' => '6.64', # TEST_REQUIRES
+    },
     ABSTRACT_FROM  => 'lib/JavaScript/V8.pm', # retrieve abstract from module
     AUTHOR         => 'Pawel Murias <pawelmurias@gmail.org>',
     LIBS              => [($V8_DIR ? "-L$V8_DIR " : '') . '-lv8'], # e.g., '-lm'
@@ -32,15 +37,12 @@ my %mm = (
     CC                => $CC,
     LD                => '$(CC)',
     depend            => { 'WithV8Context.c' => 'JavaScript-V8-Context.xsp' },
+    META_MERGE => {
+      resources        => {
+        repository     => 'http://github.com/dgl/javascript-v8',
+      }
+    },
 );
-
-if(ExtUtils::MakeMaker->can("VERSION") && ExtUtils::MakeMaker->VERSION(6.46)) {
-  $mm{META_MERGE} = {
-    resources        => {
-      repository     => 'http://github.com/dgl/javascript-v8',
-    }
-  };
-}
 
 if(gcc_version($CC) >= 4.5) {
   $mm{CCFLAGS} = '-fpermissive';
