@@ -23,19 +23,33 @@ JavaScript::V8 - Perl interface to the V8 JavaScript engine
 
   my $context = JavaScript::V8::Context->new();
 
-  $context->bind_function(write => sub { print @_ });
+  $context->bind( write => sub { print @_ } );
+  $context->bind( bottles => 3 );
+  $context->bind( wine_type => ['red', 'white', 'sparkling'] );
+
+  $context->bind( wine_type_description => {
+      white     => "White wine is a wine whose color is slightly yellow. This kind of wine is produced using non-coloured grapes or using red-skinned grapes' juice, not allowing it to extract pigment from the skin.",
+      red       => "Red wine is a type of wine made from dark-coloured (black) grape varieties. The actual colour of the wine can range from intense violet, typical of young wines, through to brick red for mature wines and brown for older red wines.",
+      sparkling => "Sparkling wine is a wine with significant levels of carbon dioxide in it making it fizzy. The carbon dioxide may result from natural fermentation, either in a bottle, as with the méthode champenoise, in a large tank designed to withstand the pressures involved (as in the Charmat process), or as a result of carbon dioxide injection.",
+  });
 
   $context->eval(q/
-    for (i = 99; i > 0; i--) {
-        write(i + " bottle(s) of beer on the wall, " + i + " bottle(s) of beer\n");
-        write("Take 1 down, pass it around, ");
-        if (i > 1) {
-            write((i - 1) + " bottle(s) of beer on the wall.");
-        }
-        else {
-            write("No more bottles of beer on the wall!");
-        }
-    }
+      for (i = bottles; i > 0; i--) {
+          var type = wine_type[i - 1];
+          var description = wine_type_description[type];
+
+          write(i + " bottle(s) of wine on the wall, " + i + " bottle(s) of wine\n");
+
+          write("This is bottle of " + type + " wine. " + description + "\n\n");
+
+          write("Take 1 down, pass it around, ");
+          if (i > 1) {
+              write((i - 1) + " bottle(s) of wine on the wall.\n");
+          }
+          else {
+              write("No more bottles of wine on the wall!\n");
+          }
+      }
   /);
 
 =head1 INSTALLING V8

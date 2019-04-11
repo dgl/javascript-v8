@@ -33,7 +33,16 @@ JavaScript::V8::Context - An object in which we can execute JavaScript
   my $context = JavaScript::V8::Context->new();
 
   # Add a function which we can call from JavaScript
-  $context->bind_function(print => sub { print @_ });
+  $context->bind(print => sub { print @_ });
+
+  # Bind variables
+  $context->bind( bottles => 3 );
+  $context->bind( wine_type => ['red', 'white', 'sparkling'] );
+  $context->bind( wine_type_description => {
+      white     => "White wine is a wine whose color is slightly yellow. This kind of wine is produced using non-coloured grapes or using red-skinned grapes' juice, not allowing it to extract pigment from the skin.",
+      red       => "Red wine is a type of wine made from dark-coloured (black) grape varieties. The actual colour of the wine can range from intense violet, typical of young wines, through to brick red for mature wines and brown for older red wines.",
+      sparkling => "Sparkling wine is a wine with significant levels of carbon dioxide in it making it fizzy. The carbon dioxide may result from natural fermentation, either in a bottle, as with the méthode champenoise, in a large tank designed to withstand the pressures involved (as in the Charmat process), or as a result of carbon dioxide injection.",
+  });
 
   my $result = $context->eval($source);
 
