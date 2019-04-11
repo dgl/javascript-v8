@@ -40,6 +40,11 @@ JavaScript::V8 - Perl interface to the V8 JavaScript engine
 
 =head1 INSTALLING V8
 
+=head2 Memory notes
+
+Please note that v8 needs around 2MB of VSZ memory. See
+L<https://rt.cpan.org/Ticket/Display.html?id=78512> for more information.
+
 =head2 From Source
 
 See L<https://v8.dev/docs/build> for how. Be warned, the source repo
