@@ -201,7 +201,7 @@ returns an array will return a list to Perl when called in list context.
 =item set_flags_from_string ( $flags )
 
 Set or unset various flags supported by V8 (see
-L<http://code.google.com/p/v8/source/browse/trunk/src/flag-definitions.h>
+L<https://github.com/v8/v8/blob/master/src/flag-definitions.h>
 or F<src/flag-definitions.h> in the V8 source for details of all available
 flags).
 
