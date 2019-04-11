@@ -31,7 +31,7 @@ for (1..100000) {
 
 SKIP: {
     skip "no ps", 1 unless check_ps();
-    ok get_rss() > 100_000, 'objects are not released';
+    ok get_rss() < 100_000, 'objects are not released';
 }
 
 done_testing;
