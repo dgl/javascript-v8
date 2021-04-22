@@ -3742,7 +3742,7 @@ __DATA__
 #endif
 
 #ifndef dNOOP
-#  define dNOOP                          extern int /*@unused@*/ Perl___notused PERL_UNUSED_DECL
+#  define dNOOP                          EXTERN_C int /*@unused@*/ Perl___notused PERL_UNUSED_DECL
 #endif
 
 #ifndef NVTYPE

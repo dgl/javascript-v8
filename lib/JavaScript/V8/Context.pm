@@ -8,9 +8,9 @@ sub new {
 
     my $time_limit = delete $args{time_limit} || 0;
     my $flags = delete $args{flags} || '';
-    my $enable_blessing 
-        = exists $args{enable_blessing} 
-        ? delete $args{enable_blessing} 
+    my $enable_blessing
+        = exists $args{enable_blessing}
+        ? delete $args{enable_blessing}
         : (exists $args{bless_prefix} ? 1 : 0);
     my $bless_prefix = delete $args{bless_prefix} || '';
 
@@ -215,9 +215,9 @@ returns an array will return a list to Perl when called in list context.
 =item set_flags_from_string ( $flags )
 
 Set or unset various flags supported by V8 (see
-L<https://github.com/v8/v8/blob/master/src/flag-definitions.h>
-or F<src/flag-definitions.h> in the V8 source for details of all available
-flags).
+L<https://github.com/v8/v8/blob/master/src/flags/flag-definitions.h>
+or F<src/flags/flag-definitions.h> in the V8 source for details of all
+available flags).
 
 For example, the C<builtins_in_stack_traces> flag controls showing built-in
 functions in stack traces. To set this, call:
@@ -229,16 +229,17 @@ enabled by default are disabled by prefixing the name with "no" - for
 example, the "foo" flag could be disabled with C<--nofoo>.
 
 Flags are commonly used for debugging or changing the behaviour of V8 in
-some way. Some flags can only be set whenever a context is created - set
-these with the flags parameter to C<new()>.
+some way. Some flags can only be set whenever a context and isolate are
+created - set these with the flags parameter to C<new()>.
 
 =item idle_notification( )
 
-Used as a hint to tell V8 that your application is idle, so now might be a
-suitable time for garbage collection. Returns 1 if there is no further work
-V8 can currently do.
+Triggers full garbage collection by telling v8 that memory is low. For
+compatibility with older versions of this module, it always returns true.
+There is no need to call it in a loop.
 
-Most users of C<JavaScript::V8> will not need this.
+Most users of C<JavaScript::V8> will not need this. It can be a slow
+operation.
 
 =item name_global( $name )
 
