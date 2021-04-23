@@ -1,8 +1,6 @@
 use 5.008;
 use ExtUtils::MakeMaker;
 use ExtUtils::CppGuess;
-
-use lib qw(inc);
 use Devel::CheckLib;
 
 my $V8_DIR = $ENV{V8_DIR};
@@ -28,6 +26,7 @@ WriteMakefile(
     CONFIGURE_REQUIRES => {
       'ExtUtils::MakeMaker' => '6.64', # TEST_REQUIRES
       'ExtUtils::CppGuess' => '0.19',
+      'Devel::CheckLib' => '0.92',
     },
     ABSTRACT_FROM  => 'lib/JavaScript/V8.pm',
     AUTHOR         => 'Pawel Murias <pawelmurias@gmail.org>',
