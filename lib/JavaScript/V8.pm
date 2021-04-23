@@ -54,17 +54,14 @@ JavaScript::V8 - Perl interface to the V8 JavaScript engine
 
 =head1 DIRECTION
 
-Since 2012, the v8 library has changed considerably, both in its build
-system and its API. Additionally, at the time of this writing (Apr 2019),
-the latest version available for Ubuntu is about 3.14, and for Homebrew
-is around 3.28. Meanwhile, the latest "release"(ish) from Google is
-around 7.5.99.
+v8's interface and behaviour changes a lot. Updating this module to support
+newer versions of v8 is a big job. The module currently supports v8 6.2.
 
 The dramatic API changes mean that backward compatibility with the
-current API will be effectively impossible. Unfortunately, the likelihood
-of security holes in the 7-or-so year old software means it will be
-necessary to keep up with the current version, rather than with the one
-v0.08 of this module supports.
+current API will be effectively impossible. The likelihood of security
+holes in a library as large, complex and high-profile as V8 means means it
+will be necessary to keep up with the current version, rather than with the
+one that this module supports.
 
 Therefore, the next steps will be to use the excellent L<Alien::Build>
 to make an "alien" module that builds and makes available v8. The current
@@ -72,6 +69,9 @@ L<Alien::V8> is not suitable, since its last release was from 2011.
 
 Contributions of effort will be welcome. Please open an RT, or just C<#v8>
 on C<irc.perl.org> to get involved.
+
+Google maintains a public document describing v8's API changes:
+L<https://docs.google.com/document/d/1g8JFi8T_oAE_7uAri7Njtig7fKaPDfotU6huOa1alds/edit#>
 
 =head1 INSTALLING V8
 

@@ -5,6 +5,11 @@
   #define Null(type) ((type)NULL)
 #endif
 
+#if PERL_VERSION < 18
+#undef dNOOP
+#define dNOOP (void)0
+#endif
+
 /* We need one MODULE... line to start the actual XS section of the file.
  * The XS++ preprocessor will output its own MODULE and PACKAGE lines */
 MODULE = JavaScript::V8		PACKAGE = JavaScript::V8

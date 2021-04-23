@@ -1,4 +1,4 @@
-Revision history for Perl extension JavaScript::V8
+- update to v8 6.2 - thanks @njohnston
 
 0.09 2019-04-11
  - zap dep on JSON - thanks @eserte for report

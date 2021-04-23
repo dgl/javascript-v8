@@ -2,6 +2,7 @@
 #define _V8Context_h_
 
 #include <v8.h>
+#include <libplatform/libplatform.h>
 
 #include <vector>
 #include <map>
@@ -23,7 +24,7 @@ extern "C" {
 using namespace v8;
 using namespace std;
 
-typedef map<string, Persistent<Object> > ObjectMap;
+typedef map<string, Persistent<Object, CopyablePersistentTraits<Object>> > ObjectMap;
 
 class SimpleObjectData {
 public:
@@ -59,7 +60,7 @@ class V8Context;
 class ObjectData {
 public:
     V8Context* context;
-    Persistent<Object> object;
+    Persistent<Object, CopyablePersistentTraits<Object>> object;
     SV* sv;
     long ptr;
 
@@ -86,7 +87,7 @@ public:
     virtual size_t size();
     void add_size(size_t bytes_);
 
-    static void destroy(Persistent<Value> object, void *data);
+    static void destroy(const WeakCallbackInfo<PerlObjectData>&);
 };
 
 typedef map<int, ObjectData*> ObjectDataMap;
@@ -112,12 +113,14 @@ class V8Context {
         Handle<Value> sv2v8(SV*);
         SV*           v82sv(Handle<Value>);
 
-        Persistent<Context> context;
+        Persistent<Context, CopyablePersistentTraits<Context>> context;
 
         void register_object(ObjectData* data);
         void remove_object(ObjectData* data);
 
         Persistent<Function> make_function;
+
+        Local<Context> get_local_context();
 
         bool enable_wantarray;
 
